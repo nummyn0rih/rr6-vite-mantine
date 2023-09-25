@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { lazy } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { MainLayout } from './layouts/MainLayout';
+import PrivatRoute from './components/PrivatRoute';
+import './App.css';
+
+const Home = lazy(() => import('./pages/Home'));
+const Characters = lazy(() => import('./pages/CharacterList'));
+const Character = lazy(() => import('./pages/Character'));
+const Locations = lazy(() => import('./pages/LocationList'));
+const Location = lazy(() => import('./pages/Location'));
+const Episodes = lazy(() => import('./pages/EpisodeList'));
+const Episode = lazy(() => import('./pages/Episode'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const Registration = lazy(() => import('./pages/Registration'));
+const ErrorPage = lazy(() => import('./pages/ErrorPage'));
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout/>,
+    errorElement: <ErrorPage/>,
+    children: [
+      {
+        path: "/",
+        element: <Home/>
+      },
+      {
+        element: <PrivatRoute/>,
+        children: [
+          {
+            path: "characters",
+            element: <Characters />,
+          },
+          {
+            path: "characters/:id",
+            element: <Character />
+          },
+          {
+            path: "locations",
+            element: <Locations />,
+          },
+          {
+            path: "locations/:id",
+            element: <Location />
+          },
+          {
+            path: "episodes",
+            element: <Episodes />,
+          },
+          {
+            path: "episodes/:id",
+            element: <Episode />
+          }
+        ]
+      },
+      {
+        path: "login",
+        element: <LoginPage />
+      },
+      {
+        path: "registration",
+        element: <Registration />
+      }
+    ]
+  }
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <RouterProvider router={router}/>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
